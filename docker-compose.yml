@@ -17,7 +17,6 @@ services:
         restart: always
         build:
             context: '.'
-        
         ports:
           - "8080:80"
         networks:
@@ -30,9 +29,9 @@ services:
       container_name: avfweb_db
       image: mysql
       ports:
-        - "4000:3306" 
+        - "3306:3306"
       expose:
-        - 4000  
+        - 3306
       environment:
         - MYSQL_ROOT_PASSWORD=password
         - MYSQL_DATABASE=avfweb_db
