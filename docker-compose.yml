@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 # Rede de comunicação entre containers
 networks:
   avfweb-network:
@@ -10,38 +10,99 @@ networks:
 
 services:
     
+    # BASE DE DADOS  
+    avfweb_db:
+        container_name: avfweb_dbo
+        image: mysql:latest
+        ports:
+            - "3307:3306"
+        expose: 
+            - "3307"  
+        env_file:
+            - ./.env            
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD} 
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}            
+        volumes:
+            - D:/Vinicius/www/avfweb_db:${DB_WORK_DIR}          
+        networks:
+            - avfweb-network     
+           
+        
+    
     # AVFWEB-API
     avfweb-api:
         container_name: avfweb-api
+        build:
+            dockerfile: Dockerfile
+            
         image: php:8.0-apache
         restart: always
-        build:
-            context: '.'
         ports:
           - "8080:80"
+        env_file:
+            - ./.env   
         networks:
           - avfweb-network
         volumes:
-          - D:/Vinicius/www/avfweb_api:/var/www/html/
+          - D:/Vinicius/www/avfweb_api:${WORK_DIR}
+        working_dir: ${WORK_DIR}
+        depends_on:
+            - avfweb_db
+        links:
+            - avfweb_db  
         tty: true  
           
-    avfweb_db:
-      container_name: avfweb_db
-      image: mysql
-      ports:
-        - "3306:3306"
-      expose:
-        - 3306
-      environment:
-        - MYSQL_ROOT_PASSWORD=password
-        - MYSQL_DATABASE=avfweb_db
-        - MYSQL_USER=avfwebroot
-        - MYSQL_PASSWORD=password
-        - MYSQL_ALLOW_EMPTY_PASSWORD=password
+    # Sistema
+    avfweb-back:
+        container_name: avfweb-sistema
+        build:
+            dockerfile: Dockerfile
+                    
+        image: php:8.0-apache
+        restart: always
         
-      volumes:
-        - D:/Vinicius/www/avfweb_db:/var/lib/mysql 
-      networks:
-        - avfweb-network   
-   
-   
+        ports:
+          - "8081:80"
+        env_file:
+            - ./.env   
+        networks:
+          - avfweb-network
+        volumes:
+          - D:/Vinicius/www/avfweb_sistema:${WORK_DIR}/public
+        working_dir: ${WORK_DIR}          
+        depends_on:
+            - avfweb_db
+        links:
+            - avfweb_db            
+        tty: true          
+
+    # Sistema
+    avfweb-front:
+        container_name: avfweb-front
+        build:
+            dockerfile: Dockerfile
+            
+        image: php:8.0-apache
+        restart: always
+        ports:
+          - "8082:80"
+        env_file:
+            - ./.env   
+        networks:
+          - avfweb-network
+        volumes:
+          - D:/Vinicius/www/avfweb_front:${WORK_DIR}/public
+        working_dir: ${WORK_DIR}          
+        depends_on:
+            - avfweb_db
+        links:
+            - avfweb_db            
+        tty: true  
+
+ 
+
+volumes: 
+    avfweb_db:
