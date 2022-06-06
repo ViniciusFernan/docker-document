@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 # Rede de comunicação entre containers
 networks:
   avfweb-network:
@@ -19,7 +19,7 @@ services:
         expose: 
             - "3307"  
         env_file:
-            - ./.env            
+            - .env
         environment:
             MYSQL_DATABASE: ${DB_DATABASE}
             MYSQL_USER: ${DB_USERNAME}
@@ -34,16 +34,15 @@ services:
     
     # AVFWEB-API
     avfweb-api:
-        container_name: avfweb-api
+        container_name: avfweb_api
+        env_file:
+            - .env
+        image: ${PHP_VERSION}
         build:
-            dockerfile: Dockerfile
-            
-        image: php:8.0-apache
+          dockerfile: ${Dockerfile}
         restart: always
         ports:
           - "8080:80"
-        env_file:
-            - ./.env   
         networks:
           - avfweb-network
         volumes:
@@ -52,57 +51,32 @@ services:
         depends_on:
             - avfweb_db
         links:
-            - avfweb_db  
-        tty: true  
-          
-    # Sistema
-    avfweb-back:
-        container_name: avfweb-sistema
-        build:
-            dockerfile: Dockerfile
-                    
-        image: php:8.0-apache
-        restart: always
-        
-        ports:
-          - "8081:80"
-        env_file:
-            - ./.env   
-        networks:
-          - avfweb-network
-        volumes:
-          - D:/Vinicius/www/avfweb_sistema:${WORK_DIR}/public
-        working_dir: ${WORK_DIR}          
-        depends_on:
-            - avfweb_db
-        links:
-            - avfweb_db            
-        tty: true          
+            - avfweb_db 
+        tty: true
 
-    # Sistema
+  # Sistema
     avfweb-front:
-        container_name: avfweb-front
+        container_name: avfweb_front
+        env_file:
+            - .env
         build:
-            dockerfile: Dockerfile
-            
-        image: php:8.0-apache
+          dockerfile: ${Dockerfile}
+
+        image: ${PHP_VERSION}
         restart: always
         ports:
-          - "8082:80"
-        env_file:
-            - ./.env   
+            - "8082:80"
         networks:
-          - avfweb-network
+            - avfweb-network
         volumes:
-          - D:/Vinicius/www/avfweb_front:${WORK_DIR}/public
-        working_dir: ${WORK_DIR}          
+            - D:/Vinicius/www/avfweb_front:${WORK_DIR}/public
+        working_dir: ${WORK_DIR}
         depends_on:
             - avfweb_db
         links:
-            - avfweb_db            
-        tty: true  
-
- 
+            - avfweb_db
+        tty: true
 
 volumes: 
     avfweb_db:
+
