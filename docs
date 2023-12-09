@@ -1,8 +1,11 @@
 -- docker-compose stop  /// stop conteiner
--- docker-compose rm  /// remove conteiner
-
+-- docker-compose rm -f /// remove conteiner
+-- docker-compose pull
 -- docker system prune -a   /// limpa imagens preexistentes
--- docker-compose up --build -d  /// cria nova imagens e novos continers
+-- docker-compose up --build -d /// cria nova imagens e novos continers
+
+
+
 
 # para laravel aqui está a estrutura para executar o comando:
 -- docker exec <container-name/ID> php artisan --version
@@ -11,4 +14,7 @@
     docker exec -it <container-name/ID> bash
     php artisan --version
     npm install && npm run dev
+
+
+
 

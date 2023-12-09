@@ -35,7 +35,8 @@ RUN docker-php-ext-install \
     iconv \
     bcmath \
     opcache \
-    calendar
+    calendar \
+    gd
 
 
 # instala o Composer

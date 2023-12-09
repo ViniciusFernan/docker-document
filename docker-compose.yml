@@ -54,7 +54,7 @@ services:
             - avfweb_db 
         tty: true
 
-  # Sistema
+    # Sistema
     avfweb-front:
         container_name: avfweb_front
         env_file:
@@ -76,6 +76,7 @@ services:
         links:
             - avfweb_db
         tty: true
+
 
 volumes: 
     avfweb_db:
